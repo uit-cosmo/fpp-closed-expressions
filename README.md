@@ -1,13 +1,28 @@
-# fpp-closed-expresions
+# fpp-closed-expressions
 
 Closed expressions for the most common functions related to shot noise processes.
 
-This project uses mpmath and numpy to calculate most common functions related to shot noise processes.
+## installation
+The package is published to PyPI and can be installed with
+```sh
+pip install closedexpressions
+```
 
-Parameters for the shot noise process:
+If you want the development version you must first clone the repo to your local machine,
+then install the project and its dependencies with [poetry]:
 
-- td: pulse duration time
-- A: average pulse amplitude
-- g: Intermittency parameter
-- l: pulse asymmetry parameter (pulse rise time: tr = - l*td, pulse fall time: tf = (1-l)*td)
-- T: Total time length of signal.
+```sh
+git clone https://github.com/uit-cosmo/fpp-closed-expressions
+cd fpp-closed-expresions
+poetry install
+```
+
+## Use
+
+Import functions directly, i.e.:
+
+```Python
+import closedexpressions as ce
+
+psd = ce.psd(omega, td, l)
+```
