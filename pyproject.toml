@@ -1,9 +1,11 @@
 [tool.poetry]
-name = "fpp-closed-expressions"
-version = "0.1.0"
+name = "closedexpressions"
+version = "0.1.1"
 description = "Closed expressions for shot noise processes."
+homepage = "https://github.com/uit-cosmo/fpp-closed-expressions"
 authors = ["gregordecristoforo <gregor.decristoforo@gmail.com>"]
 license = "MIT"
+readme = 'README.md'
 
 [tool.poetry.dependencies]
 python = "^3.9"
