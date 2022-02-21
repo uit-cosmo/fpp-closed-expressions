@@ -63,17 +63,12 @@ def psd(omega, td, l):
     assert td > 0
     assert l >= 0
     assert l <= 1
-    # td = mm.mpf(td)
-    # l = mm.mpf(l)
+
     if l in [0, 1]:
-        # fun = lambda o, td, l: 4 * td / (1 + (td * o)**2)
         psd = 4.0 * td / (1.0 + (td * omega) * (td * omega))
     elif l == 0.5:
-        # fun = lambda o, td, l: 64 * td / (4 + (td * o)**2)**2
         psd = 64.0 * td / (4.0 + (td * omega) * (td * omega)) ** 2.0
     else:
-        # fun = lambda o, td, l: 4 * td / \
-        #    ((1 + ((1 - l) * td * o)**2) * (1 + (l * td * o)**2))
         psd = (
             4.0
             * td
@@ -83,14 +78,12 @@ def psd(omega, td, l):
             )
         )
 
-    # for i in range(len(O)):
-    #    S[i] = fun(O[i], td, l)
     return psd
 
 
 def PSD_periodic_arrivals(omega, td, gamma, A_rms, A_mean, dt, norm=True):
     """Calculates the closed expression of the power spectral density  of a process
-    of periodic Lorentzian pulses
+    of periodic Lorentzian pulses with duration time td = 1
 
     Args:
         omega: array[floats], frequency array
@@ -131,7 +124,7 @@ def PSD_periodic_arrivals(omega, td, gamma, A_rms, A_mean, dt, norm=True):
 
 def autocorr_periodic_arrivals(t, gamma, A_mean, A_rms, norm=True):
     """Calculates the closed expression of the autocorrelation function of a process
-    of periodic Lorentzian pulses
+    of periodic Lorentzian pulses with duration time td = 1
 
     Args:
         time: array[floats], time array
@@ -163,7 +156,8 @@ def autocorr_periodic_arrivals(t, gamma, A_mean, A_rms, norm=True):
 
 
 def Phi_rms_periodic_lorentz(gamma, A_rms, A_mean):
-    """returns the rms values of a process of periodic Lorentz pulses"""
+    """returns the rms values of a process of periodic Lorentz pulses
+    with duration time td =1"""
     I_2 = 1 / (2 * np.pi)
     return (
         gamma * A_rms ** 2 * I_2
@@ -175,18 +169,19 @@ def Phi_rms_periodic_lorentz(gamma, A_rms, A_mean):
 
 
 def Phi_mean_periodic_lorentz(gamma, A_mean):
-    """returns the mean values of a process of periodic Lorentz pulses"""
+    """returns the mean values of a process of periodic Lorentz pulses
+    with duration time td = 1"""
     I_1 = 1
     return gamma * A_mean * I_1
 
 
 def Lorentz_pulse(theta):
-    """spatial discretisation of Lorentz pulse"""
+    """spatial discretisation of Lorentz pulse with duration time td = 1 """
     return 4 * (4 + theta ** 2) ** (-1)
 
 
 def Lorentz_PSD(theta):
-    """PSD of a single Lorentz pulse"""
+    """PSD of a single Lorentz pulse with duration time td = 1"""
     return 2 * np.pi * np.exp(-2 * np.abs(theta))
 
 
