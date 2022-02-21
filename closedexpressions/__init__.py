@@ -7,4 +7,4 @@ from .second_order_statistics import (
     autocorr_periodic_arrivals,
 )
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"

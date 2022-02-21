@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "closedexpressions"
-version = "0.1.1"
+version = "0.1.2"
 description = "Closed expressions for shot noise processes."
 homepage = "https://github.com/uit-cosmo/fpp-closed-expressions"
 authors = ["gregordecristoforo <gregor.decristoforo@gmail.com>"]
