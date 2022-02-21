@@ -2,6 +2,9 @@
 
 import numpy as np
 import mpmath as mm
+import warnings
+
+warnings.filterwarnings("ignore")
 
 
 def acorr(T, td, l):
@@ -83,3 +86,113 @@ def psd(omega, td, l):
     # for i in range(len(O)):
     #    S[i] = fun(O[i], td, l)
     return psd
+
+
+def PSD_periodic_arrivals(omega, td, gamma, A_rms, A_mean, dt, norm=True):
+    """Calculates the closed expression of the power spectral density  of a process
+    of periodic Lorentzian pulses
+
+    Args:
+        omega: array[floats], frequency array
+        gamma: float, intermittency parameters
+        A_rms: float, rms value of amplitudes
+        A_mean: float: mean amplotide
+        dt: float, time step of time array correcponding to omega
+        norm: bool, if True, expression for normalized process returned
+
+    Returns:
+        Power spectral density of process
+
+    """
+    I_2 = 1 / (2 * np.pi)
+    first_term = td * gamma * A_rms ** 2 * I_2 * Lorentz_PSD(td * omega)
+    tmp = np.zeros(omega.size)
+    index = np.zeros(1000)
+    for n in range(1, 1000):
+        index = 2 * np.pi * n * gamma
+        tmp = np.where(np.abs(omega - find_nearest(omega, index)) > 0.001, tmp, 1)
+
+    PSD = (
+        2 * np.pi * td * gamma ** 2 * A_mean ** 2 * I_2 * Lorentz_PSD(td * omega) * tmp
+    )
+
+    # imitate finite amplitude for delta functions in PSD finite
+    # amplitudes occur due to the finite resolution of the time
+    # series and the numerical method used to calculate the PSD
+    PSD = 2 * (first_term + PSD / dt)
+
+    if norm:
+        Phi_rms = Phi_rms_periodic_lorentz(gamma, A_rms, A_mean)
+        Phi_mean = Phi_mean_periodic_lorentz(gamma, A_mean)
+        PSD[0] = PSD[0] - Phi_mean ** 2 * 2 * np.pi
+        return PSD / Phi_rms ** 2
+    return PSD
+
+
+def autocorr_periodic_arrivals(t, gamma, A_mean, A_rms, norm=True):
+    """Calculates the closed expression of the autocorrelation function of a process
+    of periodic Lorentzian pulses
+
+    Args:
+        time: array[floats], time array
+        gamma: float, intermittency parameters
+        A_mean: float: mean amplotide
+        A_rms: float, rms value of amplitudes
+        norm: bool, if True, expression for normalized process returned
+
+    Returns:
+        autocorrelation function of process
+
+    """
+    I_2 = 1 / (2 * np.pi)
+    central_peak = gamma * A_rms ** 2 * I_2 * Lorentz_pulse(t)
+    oscillation = (
+        gamma
+        * np.pi
+        * (
+            1 / np.tanh(2 * np.pi * gamma - 1j * gamma * np.pi * t)
+            + 1 / np.tanh(2 * np.pi * gamma + 1j * gamma * np.pi * t)
+        )
+    )
+    R = central_peak + gamma * A_mean ** 2 * I_2 * oscillation.astype("float64")
+    if norm:
+        Phi_rms = Phi_rms_periodic_lorentz(gamma, A_rms, A_mean)
+        Phi_mean = Phi_mean_periodic_lorentz(gamma, A_mean)
+        return (R - Phi_mean ** 2) / Phi_rms ** 2
+    return R
+
+
+def Phi_rms_periodic_lorentz(gamma, A_rms, A_mean):
+    """returns the rms values of a process of periodic Lorentz pulses"""
+    I_2 = 1 / (2 * np.pi)
+    return (
+        gamma * A_rms ** 2 * I_2
+        + gamma
+        * A_mean ** 2
+        * I_2
+        * (2 * np.pi * gamma * (1 / np.tanh(2 * np.pi * gamma)) - gamma / I_2)
+    ) ** 0.5
+
+
+def Phi_mean_periodic_lorentz(gamma, A_mean):
+    """returns the mean values of a process of periodic Lorentz pulses"""
+    I_1 = 1
+    return gamma * A_mean * I_1
+
+
+def Lorentz_pulse(theta):
+    """spatial discretisation of Lorentz pulse"""
+    return 4 * (4 + theta ** 2) ** (-1)
+
+
+def Lorentz_PSD(theta):
+    """PSD of a single Lorentz pulse"""
+    return 2 * np.pi * np.exp(-2 * np.abs(theta))
+
+
+def find_nearest(array, value):
+    """returns array of parks in PSD"""
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return array[idx]
+
