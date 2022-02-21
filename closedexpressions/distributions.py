@@ -68,17 +68,12 @@ def noisy_shot_noise(X, g, e):
         F: The pdf of X.
     """
     F = np.zeros(len(X))
-    # print 'g = ', g, ', type(g) = ', type(g)
-    # print 'e = ', e, ', type(e) = ', type(e)
     assert g > 0
     assert e > 0
     g = mm.mpf(g)
     e = mm.mpf(e)
     for i in range(len(X)):
         x = mm.mpf(X[i])
-        # F[i] = (g/2)**(g/2)*e**(g/2-1)*(1+e)**(1/2)*mm.exp( - ((1+e)**(1/2)*x+g**(1/2))**2 / (2*e) ) *\
-        # ( e**(1/2)*mm.hyp1f1(g/2,1/2, ((1+e)**(1/2)*x+g**(1/2)*(1-e))**2 / (2*e) ) / (2**(1/2) * mm.gamma((1+g)/2)) +\
-        # ( (1+e)**(1/2)*x+g**(1/2)*(1-e) )*mm.hyp1f1((1+g)/2,3/2, ((1+e)**(1/2)*x+g**(1/2)*(1-e))**2 / (2*e) ) / mm.gamma(g/2) )
 
         F[i] = (
             (g * 0.5) ** (g * 0.5)
@@ -132,10 +127,12 @@ def norm_sym_dsn_dist(X, g):
 
 
 def joint_pdf_shot_noise(X, dX, g, A, l):
-    # The joint PDF of X and the normalized derivative of X, dX.
-    # X and dX are assumed to be 1d arrays. The returned joint PDF has
-    # X on the first axis, and the returned meshgrids have 'ij'-indexing.
-    # len(X) = n, len(dX) = m, shape(J) = (n,m)
+    """
+    The joint PDF of X and the normalized derivative of X, dX.
+    X and dX are assumed to be 1d arrays. The returned joint PDF has
+    X on the first axis, and the returned meshgrids have 'ij'-indexing.
+    len(X) = n, len(dX) = m, shape(J) = (n,m)
+    """
 
     J = np.zeros([len(X), len(dX)])
     xX, dxX = np.meshgrid(X, dX, indexing="ij")
@@ -203,79 +200,6 @@ def shot_noise_laplace_A_norm(X, g):
     return F
 
 
-# def ALN_dist(X,a,k,e):
-#    """
-#    An alternative to shot_noise_laplace_A, purely based on visual comparison with the empirical PDFs.
-#    Let L be an asymmetric laplace distributed variable (https://en.wikipedia.org/wiki/Asymmetric_Laplace_distribution) with scale a, asymmetry k and location m chosen m=(k^2-1)/(a k), giving <L>=0.
-#    k=0 means the distirbution is a left-zero step function, k=1 gives a symmetric distribution and k->Infinity gives a right-zero step function.
-#    Let N be a normally distributed variable, N~Normal(0,s). Then the ALN distribution is the distribution of X=L+N.
-#    Input:
-#        X: Variable values, 1d numpy array.
-#        a: scale parameter
-#        k: asymmetry parameter
-#        e: noise parameter, e=N_rms^2 / L_rms^2
-#    Output:
-#        F: The PDF of X.
-#    """
-#    assert(a>0)
-#    assert(k>0)
-#    assert(e>0)
-#    a=mm.mpf(a)
-#    k=mm.mpf(k)
-#    e=mm.mpf(e)
-#    F = np.zeros(len(X))
-#    # Some constants for easier computing
-#    c0 = 0.5*a/(k+1/k)
-#
-#    c11 = e*(k**4+1)/(2*k**4) - (k**2-1)/k**2
-#    c12 = -e*(k**4+1)/(k**2) + (k**2-1)
-#    c13 = mm.sqrt(2*e*(k**4+1))
-#
-#    c21 = -e*(k**4+1)/2 + (k**2-1)
-#    c22 = e*(k**4+1) + (k**2-1)
-#    c23 = mm.sqrt(2*e*(k**4+1))
-#
-#    for i in range(len(X)):
-#        x = X[i]
-#        F[i] = c0 * ( mm.exp(a*x/k + c11 )*(1+mm.erf( (-a*k*x + c12)/c13 )) + mm.exp(-a*k*x + c21)*(1-mm.erf( (-a*k*x + c22)/c23 ))  )
-#    return F
-#
-# def ALN_dist_norm(X,k,e):
-#    """
-#    The normalized version of ALN_dist, where a is scaled away by X->(X-<X>)/X_rms.
-#    Input:
-#        X: Variable values, 1d numpy array.
-#        k: asymmetry parameter
-#        e: noise parameter, e=N_rms^2 / L_rms^2
-#    Output:
-#        F: The PDF of X.
-#    """
-#    assert(k>0)
-#    assert(e>0)
-#    k=mm.mpf(k)
-#    e=mm.mpf(e)
-#    F = np.zeros(len(X))
-#    # Some constants for easier computing
-#    c0 = 0.5*mm.sqrt((1+e)*(k**4+1))/(k**2+1)
-#
-#    c10 = mm.sqrt((1+e)*(k**4+1))/k**2
-#    c11 = e*(k**4+1)/(2*k**4) - (k**2-1)/k**2
-#    c12 = -e*(k**4+1)/(k**2) + (k**2-1)
-#    c13 = mm.sqrt(2*e*(k**4+1))
-#    c14 = mm.sqrt((1+e)/(2*e))
-#
-#    c20 = -mm.sqrt((1+e)*(k**4+1))
-#    c21 = -e*(k**4+1)/2 + (k**2-1)
-#    c22 = e*(k**4+1) + (k**2-1)
-#    c23 = mm.sqrt(2*e*(k**4+1))
-#    c24 = mm.sqrt((1+e)/(2*e))
-#
-#    for i in range(len(X)):
-#        x = X[i]
-#        F[i] = c0 * ( mm.exp(c10*x + c11 )*(1+mm.erf(-c14*x + c12/c13 )) + mm.exp(c20*x + c21)*(1-mm.erf( (-c24*x + c22)/c23 ))  )
-#    return F
-
-
 def shotnoise_PDF_laplaceA(phi_rg, gamma_val, phi_rms):
     """
     Computes the PDF for a shotnoise process with Laplace distributed Amplitudes
@@ -301,4 +225,3 @@ def shotnoise_PDF_laplaceA(phi_rg, gamma_val, phi_rms):
     )
     t3 = kv(0.5 * (gamma_val - 1.0), np.sqrt(gamma_val) * np.abs(phi_rg) / phi_rms)
     return t1 * t2 * t3
-

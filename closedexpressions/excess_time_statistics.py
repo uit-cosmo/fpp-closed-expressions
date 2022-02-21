@@ -93,16 +93,6 @@ def eX_l0(X, g):
     return F
 
 
-# def eX_change(z,g,a):
-#    # Only the function shape, not scaled. a is a free parameter.
-#    # The rate of upwards crossings for a shot noise process, td*eN/T
-#    F = np.zeros(len(z))
-#    for i in range(len(z)):
-#        if z[i]>-np.sqrt(g):
-#            F[i] = a*(z[i]+np.sqrt(g))**g * mm.exp(-np.sqrt(g)*z[i]-g)
-#    return F
-
-
 def avT(X, g, l):
     """
     Returns the normalized average time above threshold for the normalized shot noise process X.
@@ -170,34 +160,3 @@ def avT_l0(X, g):
                 * mm.exp(np.sqrt(g) * X[i] + g)
             )
     return F
-
-
-# def avT_change(z,g,a):
-#    #The average time above threshold for a shot noise process, avT/td
-#    # This is only the function shape, a is a free parameter.
-#    F = np.zeros(len(z))
-#    for i in range(len(z)):
-#        if z[i]>-np.sqrt(g):
-#            F[i] = a* mm.gammainc(g,a=np.sqrt(g)*z[i]+g,regularized = True) * (z[i]+np.sqrt(g))**(-g) * mm.exp(np.sqrt(g)*z[i]+g)
-#    return F
-
-# def eT_gauss(z):
-#    # The fraction of time above threshold for a normally distributed process, eT/T.
-#    F = np.zeros(len(z))
-#    for i in range(len(z)):
-#        F[i] = 0.5* mm.erfc(z[i]/np.sqrt(2))
-#    return F
-#
-# def eX_gauss(z,Srms,dSrms):
-#    # The rate of upwards crossings for a normally distributed process, td*eN/T
-#    F = np.zeros(len(z))
-#    for i in range(len(z)):
-#        F[i] = (dSrms /(2*np.pi*Srms) )*mm.exp(-z[i]**2/2)
-#    return F
-#
-# def avT_gauss(z,Srms,dSrms):
-#    #The average time above threshold for a normally distributed process, avT/td
-#    F = np.zeros(len(z))
-#    for i in range(len(z)):
-#        F[i] = np.pi*(Srms/dSrms)*mm.erfc(z[i]/np.sqrt(2))*mm.exp(z[i]**2/2)
-#    return F
