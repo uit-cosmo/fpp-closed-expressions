@@ -27,6 +27,7 @@ def acorr(T, td, l):
     td = mm.mpf(td)
     l = mm.mpf(l)
     inv_td = mm.mpf(1.0 / td)
+    abs_T = np.abs(T)
 
     if np.abs(l) < eps or np.abs(l - 1.0) < eps:
         fun = lambda t, td, l: mm.exp(-t * inv_td)
@@ -39,8 +40,8 @@ def acorr(T, td, l):
             (1.0 - l) * mm.exp(-t * inv_td / (1.0 - l)) - l * mm.exp(-t * inv_td / l)
         ) / (1.0 - 2.0 * l)
 
-    for i in range(len(T)):
-        R[i] = fun(T[i], td, l)
+    for i in range(len(abs_T)):
+        R[i] = fun(abs_T[i], td, l)
 
     return R
 
