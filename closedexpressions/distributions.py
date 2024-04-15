@@ -73,7 +73,7 @@ def noisy_shot_noise(X, g, e):
     g = mm.mpf(g)
     e = mm.mpf(e)
     for i in range(len(X)):
-        x = mm.mpf(X[i])
+        x = mm.mpf(X[i].astype(np.double))
 
         F[i] = (
             (g * 0.5) ** (g * 0.5)
@@ -114,7 +114,7 @@ def norm_sym_dsn_dist(X, g):
     g = mm.mpf(g)
 
     for i in range(len(X)):
-        x = mm.mpf(np.abs(X[i]))
+        x = mm.mpf(np.abs(X[i].astype(np.double)))
         F[i] = (
             mm.sqrt(2.0 * g / mm.pi)
             * 2.0 ** (-g / 2.0)
