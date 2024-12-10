@@ -111,7 +111,7 @@ def PSD_periodic_arrivals(omega, td, gamma, A_rms, A_mean, T, norm=True):
     # imitate finite amplitude for delta functions in PSD finite
     # amplitudes occur due to the finite resolution of the time
     # series and the numerical method used to calculate the PSD
-    PSD = 2 * (first_term + PSD / T)
+    PSD = 2 * (first_term + PSD * T)
 
     if norm:
         Phi_rms = Phi_rms_periodic_lorentz(gamma, A_rms, A_mean)
