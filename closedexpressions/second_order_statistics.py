@@ -101,8 +101,11 @@ def PSD_periodic_arrivals(omega, td, gamma, A_rms, A_mean, T, norm=True):
     I_2 = 1 / (2 * np.pi)
     first_term = td * gamma * A_rms**2 * I_2 * Lorentz_PSD(td * omega)
     tmp = np.zeros(omega.size)
+    # This should not be a loop
+    # The range should not be arbitrary
     index = np.zeros(1000)
     for n in range(1, 1000):
+        # The next line requires testing - assumes td=1?
         index = 2 * np.pi * n * gamma
         tmp = np.where(np.abs(omega - find_nearest(omega, index)) > 0.001, tmp, 1)
 
