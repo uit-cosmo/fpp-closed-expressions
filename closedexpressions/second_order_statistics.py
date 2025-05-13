@@ -48,9 +48,10 @@ def acorr(T, td, l):
 
 def psd(omega, td, l):
     """
-    Returns the normalized power spectral density of a shot noise process,
+    Returns the power spectral density of a shot noise process,
     given by
     PSD(omega) = 2.0 * taud / [(1 + (1 - l)^2 omega^2 taud^2) (1 + l^2 omega^2 taud^2)]
+    The power spectral density is normalized such that :math:`\int_0^\inf S(\omega) d\omega = 2\pi`, which adds a factor two to the above equation.
     Input:
         omega...: ndarray, float: Angular frequency
         td......: float, pulse duration time
